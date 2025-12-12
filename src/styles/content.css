@@ -1,0 +1,24 @@
+#kedyy-box {
+    position: fixed;
+    bottom: 0px;
+    right: 20px;
+    width: 100px;
+    height: 100px;
+    /* background removed */
+    /* border-radius removed */
+    /* box-shadow removed or minimized if needed */
+    z-index: 999999;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    /* display flex removed as lottie fills it */
+}
+
+#kedyy-box:active {
+    cursor: grabbing;
+}
+
+/* Remove pseudo-element emoji */
+#kedyy-box::after {
+    content: none;
+}

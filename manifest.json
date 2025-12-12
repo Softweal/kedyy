@@ -1,0 +1,45 @@
+{
+    "manifest_version": 3,
+    "name": "kedyy",
+    "version": "1.0.0",
+    "description": "A professional cross-browser extension template.",
+    "action": {
+        "default_popup": "src/pages/popup.html",
+        "default_title": "Open Extension"
+    },
+    "background": {
+        "service_worker": "src/scripts/background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "src/libs/lottie.min.js",
+                "src/scripts/content.js"
+            ],
+            "css": [
+                "src/styles/content.css"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "src/assets/kedy.json"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ],
+    "permissions": [
+        "storage",
+        "activeTab"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ]
+}
