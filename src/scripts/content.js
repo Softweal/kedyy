@@ -24,6 +24,48 @@ console.log('kedyy content script initialized.');
         console.error('Lottie library not loaded in content script.');
     }
 
+    // Create Dialogue Element
+    const dialogue = document.createElement('div');
+    dialogue.id = 'kedyy-dialogue';
+    dialogue.textContent = 'meow';
+    box.appendChild(dialogue);
+
+    let userName = '';
+
+    // Load initial name and color
+    chrome.storage.local.get(['userName', 'catHue'], (result) => {
+        if (result.userName) {
+            userName = result.userName;
+        }
+        if (result.catHue) {
+            box.style.filter = `hue-rotate(${result.catHue}deg)`;
+        }
+    });
+
+    // Listen for changes
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+        if (namespace === 'local') {
+            if (changes.userName) {
+                userName = changes.userName.newValue;
+            }
+            if (changes.catHue) {
+                console.log('Hue changed to:', changes.catHue.newValue);
+                box.style.filter = `hue-rotate(${changes.catHue.newValue}deg)`;
+            }
+        }
+    });
+
+    // Update listeners to show/hide dialogue
+    box.addEventListener('mouseenter', () => {
+        const text = userName ? `meow, ${userName}!` : 'meow';
+        dialogue.textContent = text;
+        dialogue.classList.add('show');
+    });
+
+    box.addEventListener('mouseleave', () => {
+        dialogue.classList.remove('show');
+    });
+
     // Physics constants
     const GRAVITY = 0.8;
     const BOUNCE = 0.7;
@@ -33,9 +75,12 @@ console.log('kedyy content script initialized.');
     // State
     // Initial Y should be bottom 0 relative to viewport? 
     // box height is 100px.
+    // We add some pixels to sink it down because the Lottie animation likely has bottom padding.
+    const VISUAL_OFFSET_Y = 16;
+
     let state = {
-        x: window.innerWidth - 80,
-        y: window.innerHeight - 100, // Start at absolute bottom
+        x: window.innerWidth - 140,
+        y: window.innerHeight - 100 + VISUAL_OFFSET_Y,
         vx: 0,
         vy: 0,
         isDragging: false,

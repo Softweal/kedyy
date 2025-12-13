@@ -1,7 +1,7 @@
 #kedyy-box {
     position: fixed;
     bottom: 0px;
-    right: 20px;
+    right: 140px;
     width: 100px;
     height: 100px;
     /* background removed */
@@ -21,4 +21,42 @@
 /* Remove pseudo-element emoji */
 #kedyy-box::after {
     content: none;
+}
+
+/* Dialogue Bubble Styles */
+#kedyy-dialogue {
+    position: absolute;
+    bottom: 110px;
+    /* Above the cat */
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px 12px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    pointer-events: none;
+    white-space: nowrap;
+    opacity: 0;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1000000;
+}
+
+#kedyy-dialogue.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+#kedyy-dialogue::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.95) transparent transparent transparent;
 }
