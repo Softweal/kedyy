@@ -12,16 +12,35 @@
     <div class="container">
         <div class="content">
             <div id="lottie-container"></div>
-            <div class="input-group">
-                <input type="text" id="nameInput" placeholder="Adınız nedir?">
-                <button id="saveBtn">Kaydet</button>
+            <div class="slider-group">
+                <label for="nameInput">Adınız Nedir?</label>
+                <div class="row-group">
+                    <input type="text" id="nameInput" placeholder="Adınız nedir?">
+                    <button id="saveBtn">Kaydet</button>
+                </div>
             </div>
             <div class="slider-group">
                 <label for="colorRange">Renk Tonu</label>
                 <input type="range" id="colorRange" min="0" max="360" value="0">
             </div>
+            <div class="slider-group">
+                <label for="themeSelect">Tema</label>
+                <select id="themeSelect">
+                    <option value="dark">Karanlık</option>
+                    <option value="light">Aydınlık</option>
+                </select>
+            </div>
+            <div class="slider-group">
+                <label for="catSelect">Kediniz</label>
+                <select id="catSelect">
+                    <option value="kedy.json">Kedy</option>
+                    <option value="kedy2.json">Mırmır</option>
+                    <option value="kedy3.json">Asil</option>
+                    <option value="kedy4.json">Minnak</option>
+                </select>
+            </div>
             <p class="developer">Emre Kayık tarafından geliştirilmiştir.</p>
-            <p class="quote">hayat'a atfedilmiştir.</p>
+            <p class="quote">hayat'a ithafen.</p>
         </div>
     </div>
     <script src="../libs/lottie.min.js"></script>

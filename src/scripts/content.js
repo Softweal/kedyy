@@ -7,9 +7,26 @@ console.log('kedyy content script initialized.');
     document.body.appendChild(box);
 
     // Initialize Lottie
-    if (window.lottie) {
-        const animationUrl = chrome.runtime.getURL('src/assets/kedy.json');
-        const anim = lottie.loadAnimation({
+    // Initialize Lottie
+    let anim;
+
+    function loadCat(catFile = 'kedy.json') {
+        if (!window.lottie) {
+            console.error('Lottie library not loaded in content script.');
+            return;
+        }
+
+        // Destroy existing animation if it exists
+        if (anim) {
+            anim.destroy();
+        }
+
+        box.innerHTML = ''; // Clear container
+        // Re-append dialogue
+        box.appendChild(dialogue);
+
+        const animationUrl = chrome.runtime.getURL(`src/assets/${catFile}`);
+        anim = lottie.loadAnimation({
             container: box,
             renderer: 'svg',
             loop: true,
@@ -17,11 +34,9 @@ console.log('kedyy content script initialized.');
             path: animationUrl
         });
 
-        box.addEventListener('mouseenter', () => anim.play());
-        box.addEventListener('mouseleave', () => anim.stop());
-
-    } else {
-        console.error('Lottie library not loaded in content script.');
+        // Re-attach listeners
+        box.onmouseenter = () => anim.play();
+        box.onmouseleave = () => anim.stop();
     }
 
     // Create Dialogue Element
@@ -32,14 +47,16 @@ console.log('kedyy content script initialized.');
 
     let userName = '';
 
-    // Load initial name and color
-    chrome.storage.local.get(['userName', 'catHue'], (result) => {
+    // Load initial data
+    chrome.storage.local.get(['userName', 'catHue', 'selectedCat'], (result) => {
         if (result.userName) {
             userName = result.userName;
         }
         if (result.catHue) {
             box.style.filter = `hue-rotate(${result.catHue}deg)`;
         }
+        // Load selected cat or default
+        loadCat(result.selectedCat || 'kedy.json');
     });
 
     // Listen for changes
@@ -49,8 +66,10 @@ console.log('kedyy content script initialized.');
                 userName = changes.userName.newValue;
             }
             if (changes.catHue) {
-                console.log('Hue changed to:', changes.catHue.newValue);
                 box.style.filter = `hue-rotate(${changes.catHue.newValue}deg)`;
+            }
+            if (changes.selectedCat) {
+                loadCat(changes.selectedCat.newValue);
             }
         }
     });

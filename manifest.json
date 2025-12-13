@@ -1,11 +1,21 @@
 {
     "manifest_version": 3,
     "name": "kedyy",
-    "version": "1.0.0",
-    "description": "A professional cross-browser extension template.",
+    "version": "1.0.3",
+    "author": "Emre Kayık",
+    "description": "kedyy tarayıcınızdaki kediniz. hayat'a ithafen.",
     "action": {
         "default_popup": "src/pages/popup.html",
-        "default_title": "Open Extension"
+        "default_title": "kedyy",
+        "default_icon": "src/assets/icon.png"
+    },
+    "icons": {
+        "16": "src/assets/icon.png",
+        "48": "src/assets/icon.png",
+        "128": "src/assets/icon.png"
+    },
+    "chrome_url_overrides": {
+        "newtab": "src/pages/newtab.html"
     },
     "background": {
         "service_worker": "src/scripts/background.js"
@@ -28,7 +38,10 @@
     "web_accessible_resources": [
         {
             "resources": [
-                "src/assets/kedy.json"
+                "src/assets/kedy.json",
+                "src/assets/kedy2.json",
+                "src/assets/kedy3.json",
+                "src/assets/kedy4.json"
             ],
             "matches": [
                 "<all_urls>"
