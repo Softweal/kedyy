@@ -1,0 +1,80 @@
+name: Release Extension
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Get Version
+        id: get_version
+        run: |
+          VERSION=$(jq -r '.version' manifest.json)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+
+      - name: Prepare Firefox Build
+        run: |
+          mkdir -p dist/firefox
+          # Copy source files
+          cp -r src dist/firefox/
+          # Use Firefox specific manifest
+          cp manifest.firefox.json dist/firefox/manifest.json
+          # Copy README if needed
+          cp README.md dist/firefox/ 2>/dev/null || true
+          
+          # Create Firefox zip
+          cd dist/firefox
+          zip -r ../../kedyy-firefox-v${{ steps.get_version.outputs.VERSION }}.zip .
+          cd ../..
+
+      - name: Prepare Chrome Build
+        run: |
+          mkdir -p dist/chrome
+          # Copy source files
+          cp -r src dist/chrome/
+          # Use standard manifest
+          cp manifest.json dist/chrome/manifest.json
+          # Copy README
+          cp README.md dist/chrome/ 2>/dev/null || true
+          
+          # Create Chrome zip
+          cd dist/chrome
+          zip -r ../../kedyy-chrome-v${{ steps.get_version.outputs.VERSION }}.zip .
+          cd ../..
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            kedyy-chrome-v${{ steps.get_version.outputs.VERSION }}.zip
+            kedyy-firefox-v${{ steps.get_version.outputs.VERSION }}.zip
+          name: Release v${{ steps.get_version.outputs.VERSION }}
+          body: |
+            ## Browser Extension Release v${{ steps.get_version.outputs.VERSION }}
+            
+            - **Chrome / Edge / Brave / Opera**: Download `kedyy-chrome-v${{ steps.get_version.outputs.VERSION }}.zip`
+            - **Firefox**: Download `kedyy-firefox-v${{ steps.get_version.outputs.VERSION }}.zip`
+            
+            ### Installation
+            1. Download the zip file for your browser.
+            2. Extract the zip file.
+            3. In your browser:
+               - **Chrome/Edge**: Go to `extensions`, enable "Developer mode", and click "Load unpacked".
+               - **Firefox**: Go to `about:debugging#/runtime/this-firefox` and click "Load Temporary Add-on" (or sign it via AMO).
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

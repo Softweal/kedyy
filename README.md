@@ -2,8 +2,6 @@
 
 Tarayıcındaki kedi.
 
-> "hayat'a ithafen."
-
 ## Chrome
 
 1. Bu klasörü indirin.
