@@ -5,26 +5,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    // Name handling
     const nameInput = document.getElementById('nameInput');
     const saveBtn = document.getElementById('saveBtn');
 
-    // Color handling
     const colorRange = document.getElementById('colorRange');
     const lottieContainer = document.getElementById('lottie-container');
 
-    // Theme handling
     const themeSelect = document.getElementById('themeSelect');
-
-    // Cat handling
     const catSelect = document.getElementById('catSelect');
 
-    // Load saved data
     chrome.storage.local.get(['userName', 'catHue', 'theme', 'selectedCat'], (result) => {
         if (result.userName) {
             nameInput.value = result.userName;
         } else {
-            nameInput.value = 'hayat';
+            nameInput.value = 'name';
         }
         if (result.catHue) {
             colorRange.value = result.catHue;
@@ -59,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Save name
     saveBtn.addEventListener('click', () => {
         const name = nameInput.value.trim();
         chrome.storage.local.set({ userName: name }, () => {
@@ -68,20 +61,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Save theme
     themeSelect.addEventListener('change', (e) => {
         const theme = e.target.value;
         chrome.storage.local.set({ theme: theme });
     });
 
-    // Save cat
     catSelect.addEventListener('change', (e) => {
         const catFile = e.target.value;
         chrome.storage.local.set({ selectedCat: catFile });
         loadAnimation(catFile);
     });
 
-    // Save color live
     colorRange.addEventListener('input', (e) => {
         const hue = e.target.value;
         lottieContainer.style.filter = `hue-rotate(${hue}deg)`;

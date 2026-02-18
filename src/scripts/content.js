@@ -6,8 +6,7 @@ console.log('kedyy content script initialized.');
     box.id = 'kedyy-box';
     document.body.appendChild(box);
 
-    // Initialize Lottie
-    // Initialize Lottie
+    // Lottie kütüphanesi hazırsa yükle
     let anim;
 
     function loadCat(catFile = 'kedy.json') {
@@ -16,13 +15,11 @@ console.log('kedyy content script initialized.');
             return;
         }
 
-        // Destroy existing animation if it exists
         if (anim) {
             anim.destroy();
         }
 
-        box.innerHTML = ''; // Clear container
-        // Re-append dialogue
+        box.innerHTML = '';
         box.appendChild(dialogue);
 
         const animationUrl = chrome.runtime.getURL(`src/assets/${catFile}`);
@@ -34,12 +31,10 @@ console.log('kedyy content script initialized.');
             path: animationUrl
         });
 
-        // Re-attach listeners
         box.onmouseenter = () => anim.play();
         box.onmouseleave = () => anim.stop();
     }
 
-    // Create Dialogue Element
     const dialogue = document.createElement('div');
     dialogue.id = 'kedyy-dialogue';
     dialogue.textContent = 'meow';
@@ -47,7 +42,6 @@ console.log('kedyy content script initialized.');
 
     let userName = '';
 
-    // Load initial data
     chrome.storage.local.get(['userName', 'catHue', 'selectedCat'], (result) => {
         if (result.userName) {
             userName = result.userName;
@@ -55,11 +49,9 @@ console.log('kedyy content script initialized.');
         if (result.catHue) {
             box.style.filter = `hue-rotate(${result.catHue}deg)`;
         }
-        // Load selected cat or default
         loadCat(result.selectedCat || 'kedy.json');
     });
 
-    // Listen for changes
     chrome.storage.onChanged.addListener((changes, namespace) => {
         if (namespace === 'local') {
             if (changes.userName) {
@@ -74,7 +66,6 @@ console.log('kedyy content script initialized.');
         }
     });
 
-    // Update listeners to show/hide dialogue
     box.addEventListener('mouseenter', () => {
         const text = userName ? `meow, ${userName}!` : 'meow';
         dialogue.textContent = text;
@@ -85,16 +76,10 @@ console.log('kedyy content script initialized.');
         dialogue.classList.remove('show');
     });
 
-    // Physics constants
     const GRAVITY = 0.8;
     const BOUNCE = 0.7;
     const FRICTION = 0.98;
     const THROW_FORCE = 0.5;
-
-    // State
-    // Initial Y should be bottom 0 relative to viewport? 
-    // box height is 100px.
-    // We add some pixels to sink it down because the Lottie animation likely has bottom padding.
     const VISUAL_OFFSET_Y = 16;
 
     let state = {
@@ -109,22 +94,16 @@ console.log('kedyy content script initialized.');
         dragStartY: 0
     };
 
-    // ...
-
     function updatePosition() {
-        // We use transform directly so it's performant and overrides any CSS positioning issues
         box.style.transform = `translate(${state.x}px, ${state.y}px)`;
-        // Also ensure left/top are 0 so translate is absolute
         box.style.left = '0px';
         box.style.top = '0px';
-        box.style.bottom = 'auto'; // override css
-        box.style.right = 'auto'; // override css
+        box.style.bottom = 'auto';
+        box.style.right = 'auto';
     }
 
-    // Initial position update
     updatePosition();
 
-    // Mouse/Touch Events
     box.addEventListener('mousedown', startDrag);
     box.addEventListener('touchstart', (e) => startDrag(e.touches[0]), { passive: false });
 
@@ -134,7 +113,6 @@ console.log('kedyy content script initialized.');
     document.addEventListener('mouseup', endDrag);
     document.addEventListener('touchend', endDrag);
 
-    // Animation Loop
     function loop() {
         if (!state.isDragging) {
             applyPhysics();
@@ -152,7 +130,6 @@ console.log('kedyy content script initialized.');
         state.vx = 0;
         state.vy = 0;
 
-        // Prevent text selection while dragging
         e.preventDefault && e.preventDefault();
     }
 
@@ -160,19 +137,13 @@ console.log('kedyy content script initialized.');
         if (!state.isDragging) return;
 
         const currentX = e.clientX;
-
-        // Calculate throw velocity based on mouse movement
         state.vx = (currentX - state.lastMouseX) * THROW_FORCE;
         state.vy = 0;
-
         state.lastMouseX = currentX;
-
         state.x = currentX - state.dragStartX;
-        // Vertically locked
-
         updatePosition();
 
-        if (e.preventDefault) e.preventDefault(); // Prevent scrolling on touch
+        if (e.preventDefault) e.preventDefault();
     }
 
     function endDrag() {
@@ -181,55 +152,43 @@ console.log('kedyy content script initialized.');
     }
 
     function applyPhysics() {
-        // Apply gravity
         state.vy += GRAVITY;
-
-        // Apply air resistance
         state.vx *= FRICTION;
-        state.vy *= FRICTION; // Optional: air resistance on Y too
+        state.vy *= FRICTION;
 
-        // Update position
         state.x += state.vx;
         state.y += state.vy;
 
-        // Floor collision (Bottom of screen)
         const floor = window.innerHeight - box.offsetHeight;
         if (state.y > floor) {
             state.y = floor;
             state.vy *= -BOUNCE;
 
-            // Stop completely if bouncing too low (prevent jitter)
             if (Math.abs(state.vy) < GRAVITY * 2) {
                 state.vy = 0;
             }
-
-            // Ground friction
             state.vx *= 0.8;
         }
 
-        // Ceiling collision
         if (state.y < 0) {
             state.y = 0;
             state.vy *= -BOUNCE;
         }
 
-        // Right wall collision
         const rightWall = window.innerWidth - box.offsetWidth;
         if (state.x > rightWall) {
             state.x = rightWall;
             state.vx *= -BOUNCE;
         }
 
-        // Left wall collision
         if (state.x < 0) {
             state.x = 0;
             state.vx *= -BOUNCE;
         }
-
         updatePosition();
     }
 
-    // Old updatePosition removed
+
 
     function px(val) {
         return val + 'px';

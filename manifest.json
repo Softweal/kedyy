@@ -3,7 +3,7 @@
     "name": "kedyy",
     "version": "1.0.4",
     "author": "Emre Kayık",
-    "description": "kedyy tarayıcınızdaki kediniz. hayat'a ithafen.",
+    "description": "kedyy tarayıcınızdaki kedyyniz.",
     "action": {
         "default_popup": "src/pages/popup.html",
         "default_title": "kedyy",

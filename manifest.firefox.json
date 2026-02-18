@@ -1,11 +1,11 @@
 {
     "manifest_version": 3,
     "name": "kedyy",
-    "version": "1.0.0",
-    "description": "A professional cross-browser extension template.",
+    "version": "1.0.4",
+    "description": "kedyy tarayıcınızdaki kedyyniz.",
     "action": {
         "default_popup": "src/pages/popup.html",
-        "default_title": "Open Extension"
+        "default_title": "kedyy"
     },
     "background": {
         "scripts": [
